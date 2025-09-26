@@ -8,3 +8,8 @@ class Player:
     def hand(self):
         pass 
 
+
+    def draw_card(self):
+        pass
+
+
