@@ -49,8 +49,12 @@ class Game:
         """ 
         while (True):
             card = input("Enter the card number you want to play ")
-            if f"card_{card}" in self.players[self.turn].get_unplayed_cards():
-                return self.players[self.turn].get_card(f"card_{card}")
+            card = f"card_{card}"
+            if card in self.players[self.turn].get_unplayed_cards():
+                self.players[self.turn].set_played_card(card)
+                return self.players[self.turn].get_card(card)
+            else:
+                print("You can only select card you have in your hand")
 
 
     def update_scores(self, state: list) -> None: 
@@ -61,13 +65,24 @@ class Game:
         self.players[1 - self.turn].score -= len(state) 
 
 
+    def get_winner(self) -> str:
+        """
+        Determines winner of the game by comparing players scores.
+        """
+        winner = ""
+        if self.players[0].score > self.players[1].score:
+            winner = self.players[0].name 
+        else:
+            winner = self.players[1].name
+        return winner
+
+
     def main_loop(self) -> None:
         """
         Main loop of the game 
         """ 
         while (not self.board.is_gameover()):
-            # self.players[0].get_unplayed_cards() 
-
+            self.print_board()
             # Get input 
             row, col = self.get_input_coords()
             card = self.get_input_card()
@@ -81,4 +96,55 @@ class Game:
 
             # switch turn 
             self.set_player_turn()
-            break 
+
+        self.print_board()
+        print(f"Player {self.get_winner()} is the Winner")
+
+
+    def print_board(self):
+        for row in range(self.board.height):
+            print("+-----+-----+-----+")
+
+            for inner_row in range(3):
+
+                for col in range(self.board.width):
+                    card = self.board.board[row][col]
+                    if inner_row == 0:
+                        if card is not None:
+                            if col == 2:
+                                print(f"|  {card["north"]}  |")
+                            else:
+                                print(f"|  {card["north"]}  ", end="")
+                        else:
+                            if col == 2:
+                                print(f"|  0  |")
+                            else:
+                                print(f"|  0  ", end="")
+
+                    if inner_row == 1:
+                        if card is not None:
+                            if col == 2:
+                                print(f"|{card["east"]} {card["player"]} {card["west"]}|")
+                            else:
+                                print(f"|{card["east"]} {card["player"]} {card["west"]}", end="")
+                        else:
+                            if col == 2:
+                                print(f"|0   0|")
+                            else:
+                                print(f"|0   0", end="")
+
+                    if inner_row == 2:
+                        if card is not None:
+                            if col == 2:
+                                print(f"|  {card["south"]}  |")
+                            else:
+                                print(f"|  {card["south"]}  ", end="")
+                        else:
+                            if col == 2:
+                                print(f"|  0  |")
+                            else:
+                                print(f"|  0  ", end="")
+
+        print("+-----+-----+-----+")
+        print(f"Player A: {self.players[0].score}, Player B: {self.players[1].score}")
+

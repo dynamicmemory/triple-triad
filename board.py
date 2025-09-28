@@ -1,9 +1,12 @@
 class Board:
 
     def __init__(self):
+        self.height: int = 3
+        self.width: int = 3
         self.board: list = self.generate_board()
         self.gameover: bool = False
         self.empty_tiles: int = 9
+
 
     def generate_board(self) -> list:
         """
@@ -49,7 +52,7 @@ class Board:
         """ 
         Simple does too much, Flips cards if they can be flipped 
         """
-        dirs = {"north": (1,0), "east": (0,1), "south": (-1,0), "west": (0,-1)}
+        dirs = {"north": (-1, 0), "east": (0, 1), "south": (1, 0), "west": (0, -1)}
         played_card = self.board[row][col]
         flipped = []
         for key, val in dirs.items():
@@ -62,29 +65,33 @@ class Board:
                 continue 
 
             if key == "north":
-                if played_card["top"] > off_card["bottom"]:
-                    self.board[row_off][col_off]["owner"] = played_card["player"]
+                if played_card["north"] > off_card["south"]:
+                    self.board[row_off][col_off]["player"] = played_card["player"]
+                    self.board[row_off][col_off]["played"] = True
                     flipped.append((row_off, 
                                     col_off, 
                                     played_card["player"], 
                                     off_card["player"]))
             if key == "east":
-                if played_card["right"] > off_card["left"]:
-                    self.board[row_off][col_off]["owner"] = played_card["player"]
+                if played_card["east"] > off_card["west"]:
+                    self.board[row_off][col_off]["player"] = played_card["player"]
+                    self.board[row_off][col_off]["played"] = True
                     flipped.append((row_off, 
                                     col_off, 
                                     played_card["player"], 
                                     off_card["player"]))
             if key == "south":
-                if played_card["bottom"] > off_card["top"]:
-                    self.board[row_off][col_off]["owner"] = played_card["player"]
+                if played_card["south"] > off_card["north"]:
+                    self.board[row_off][col_off]["player"] = played_card["player"]
+                    self.board[row_off][col_off]["played"] = True
                     flipped.append((row_off, 
                                     col_off, 
                                     played_card["player"], 
                                     off_card["player"]))
             if key == "west":
-                if played_card["left"] > off_card["right"]:
-                    self.board[row_off][col_off]["owner"] = played_card["player"]
+                if played_card["west"] > off_card["east"]:
+                    self.board[row_off][col_off]["player"] = played_card["player"]
+                    self.board[row_off][col_off]["played"] = True
                     flipped.append((row_off, 
                                     col_off, 
                                     played_card["player"], 

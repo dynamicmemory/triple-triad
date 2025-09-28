@@ -28,6 +28,12 @@ class Player:
                 cards.append(key)
         return cards
 
+    def set_played_card(self, card: str) -> None:
+        """ 
+        Sets a cards "played" variable to true
+        """
+        self.hand[card]["played"] = True
+
 
     def get_card(self, card: str) -> card.Card:
         return self.hand[card]

@@ -18,6 +18,9 @@ class Card:
         return values
 
 
+    # def update_owner(self, player: str):
+    #     self.owner = player
+
     def is_played(self):
 
         pass         
