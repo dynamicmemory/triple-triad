@@ -27,6 +27,13 @@ class Game:
         self.players[self.turn] 
 
 
+    def get_player_turn(self) -> p.Player:
+        """
+        Gets the current player
+        """
+        return self.players[self.turn]
+
+
     # TODO: Tighten this up, get rid of the try except
     def get_input_coords(self) -> tuple:
         """ 
@@ -50,18 +57,19 @@ class Game:
         while (True):
             card = input("Enter the card number you want to play ")
             card = f"card_{card}"
-            if card in self.players[self.turn].get_unplayed_cards():
-                self.players[self.turn].set_played_card(card)
-                return self.players[self.turn].get_card(card)
-            else:
-                print("You can only select card you have in your hand")
+            player = self.get_player_turn()
+            for c in player.get_unplayed_cards():
+                if card == c["name"]:
+                    return player.get_card(card)
+                else:
+                    print("You can only select card you have in your hand")
 
 
     def update_scores(self, state: list) -> None: 
         """
         Updates both players scores depending on cards flipped on turn
         """
-        self.players[self.turn].score += len(state) 
+        self.get_player_turn().score += len(state) 
         self.players[1 - self.turn].score -= len(state) 
 
 
@@ -82,7 +90,10 @@ class Game:
         Main loop of the game 
         """ 
         while (not self.board.is_gameover()):
+            # Print board and hand  
             self.print_board()
+            self.print_player_hand()
+
             # Get input 
             row, col = self.get_input_coords()
             card = self.get_input_card()
@@ -101,12 +112,28 @@ class Game:
         print(f"Player {self.get_winner()} is the Winner")
 
 
+    def print_player_hand(self):
+        players_hand: list = self.get_player_turn().get_unplayed_cards()
+        print("---Card scores---") 
+        for card in players_hand:
+            print(f"  {card["north"]}  |", end="")
+        print()
+        for card in players_hand:
+            print(f" {card["east"]} {card["west"]} |", end="")
+        print() 
+        for card in players_hand:
+            print(f"  {card["south"]}  |", end="")
+        print()
+        print("---Card Numbers---")
+        for card in players_hand:
+            print(f"  {card["name"][5]}  |", end="")
+        print()
+
+
     def print_board(self):
         for row in range(self.board.height):
             print("+-----+-----+-----+")
-
             for inner_row in range(3):
-
                 for col in range(self.board.width):
                     card = self.board.board[row][col]
                     if inner_row == 0:

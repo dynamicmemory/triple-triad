@@ -14,18 +14,18 @@ class Player:
         """
         hand = {}
         for num in range(5):
-            hand[f"card_{num}"] = card.Card(self.name).generate_card()
+            hand[f"card_{num}"] = card.Card(self.name, num).generate_card()
         return hand
 
 
     def get_unplayed_cards(self) -> list:
         """
-        Returns a list of cards a player has not played
+        Returns a list of cards a player has not played yet.
         """
         cards = []
-        for key, val in self.hand.items():
-            if not val["played"]:
-                cards.append(key)
+        for card in self.hand:
+            if not self.hand[card]["played"]:
+                cards.append(self.hand[card])
         return cards
 
     def set_played_card(self, card: str) -> None:
