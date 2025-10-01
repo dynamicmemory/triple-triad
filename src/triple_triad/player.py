@@ -1,4 +1,4 @@
-import card as card 
+from triple_triad.card import Card 
 
 class Player:
 
@@ -14,7 +14,7 @@ class Player:
         """
         hand = {}
         for num in range(5):
-            hand[f"card_{num}"] = card.Card(self.name, num).generate_card()
+            hand[f"card_{num}"] = Card(self.name, num).generate_card()
         return hand
 
 
@@ -28,6 +28,7 @@ class Player:
                 cards.append(self.hand[card])
         return cards
 
+
     def set_played_card(self, card: str) -> None:
         """ 
         Sets a cards "played" variable to true
@@ -35,7 +36,7 @@ class Player:
         self.hand[card]["played"] = True
 
 
-    def get_card(self, card: str) -> card.Card:
+    def get_card(self, card: str) -> Card:
         return self.hand[card]
 
 

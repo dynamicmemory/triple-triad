@@ -1,21 +1,21 @@
-import board as board
-import player as p
+from triple_triad.board import Board
+from triple_triad.player import Player
 
 class Game:
 
     def __init__(self):
-        self.board: board.Board = board.Board()
-        self.players: list[p.Player] = self.create_players()
+        self.board: Board = Board()
+        self.players: list[Player] = self.create_players()
         self.turn: int = 0
 
 
-    def create_players(self) -> list[p.Player]:
+    def create_players(self) -> list[Player]:
         """
         Creates two player objects for the game
         returns: List[p.Player]
         """
-        p1: p.Player = p.Player("A")
-        p2: p.Player = p.Player("B")
+        p1: Player = Player("A")
+        p2: Player = Player("B")
         return [p1, p2]
 
 
@@ -27,7 +27,7 @@ class Game:
         self.players[self.turn] 
 
 
-    def get_player_turn(self) -> p.Player:
+    def get_player_turn(self) -> Player:
         """
         Gets the current player
         """
@@ -50,7 +50,7 @@ class Game:
 
     
     # TODO: Fix if statement and card string
-    def get_input_card(self) -> p.card.Card:
+    def get_input_card(self):
         """ 
         Gets users card choice and returns the cards name 
         """ 

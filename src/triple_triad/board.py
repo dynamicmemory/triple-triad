@@ -13,8 +13,8 @@ class Board:
         Creates a 2d array of 3x3 shape and fills each element with "empty"
         """
         board: list = [[],[],[]]
-        for row in range(3):
-            for col in range(3):
+        for row in range(self.height):
+            for col in range(self.width):
                 board[row].append(None)
         return board
 
@@ -31,8 +31,8 @@ class Board:
         Searches the board and finds all empty squares
         """
         moves: list = []
-        for row in range(3):
-            for col in range(3):
+        for row in range(self.height):
+            for col in range(self.width):
                 if self.board[row][col] == None:
                     moves.append((row, col))
         return moves
@@ -53,49 +53,25 @@ class Board:
         Simple does too much, Flips cards if they can be flipped 
         """
         dirs = {"north": (-1, 0), "east": (0, 1), "south": (1, 0), "west": (0, -1)}
+        ops = {"north": "south", "east": "west", "south": "north", "west": "east"}
         played_card = self.board[row][col]
         flipped = []
         for key, val in dirs.items():
             row_off, col_off = val[0] + row, val[1] + col      
+            # Eliminate coords that are off the board
             if (row_off < 0 or row_off > 2) or (col_off < 0 or col_off > 2):
                 continue 
 
+            # Eliminate empty squares
             off_card = self.board[row_off][col_off]
             if off_card == None or off_card["player"] == played_card["player"]:
-                continue 
+                continue
 
-            if key == "north":
-                if played_card["north"] > off_card["south"]:
-                    self.board[row_off][col_off]["player"] = played_card["player"]
-                    self.board[row_off][col_off]["played"] = True
-                    flipped.append((row_off, 
-                                    col_off, 
-                                    played_card["player"], 
-                                    off_card["player"]))
-            if key == "east":
-                if played_card["east"] > off_card["west"]:
-                    self.board[row_off][col_off]["player"] = played_card["player"]
-                    self.board[row_off][col_off]["played"] = True
-                    flipped.append((row_off, 
-                                    col_off, 
-                                    played_card["player"], 
-                                    off_card["player"]))
-            if key == "south":
-                if played_card["south"] > off_card["north"]:
-                    self.board[row_off][col_off]["player"] = played_card["player"]
-                    self.board[row_off][col_off]["played"] = True
-                    flipped.append((row_off, 
-                                    col_off, 
-                                    played_card["player"], 
-                                    off_card["player"]))
-            if key == "west":
-                if played_card["west"] > off_card["east"]:
-                    self.board[row_off][col_off]["player"] = played_card["player"]
-                    self.board[row_off][col_off]["played"] = True
-                    flipped.append((row_off, 
-                                    col_off, 
-                                    played_card["player"], 
-                                    off_card["player"]))
+            if played_card[key] > off_card[ops[key]]:
+                off_card["player"] = played_card["player"]
+                off_card["played"] = True
+                flipped.append((row_off, col_off, played_card["player"], off_card["player"]))
+
         return flipped
 
 

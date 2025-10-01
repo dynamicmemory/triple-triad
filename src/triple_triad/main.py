@@ -1,7 +1,7 @@
-import game as game 
+from triple_triad.game import Game 
 
 def main():
-    g = game.Game()
+    g = Game()
     g.main_loop()
 
 if __name__ == "__main__":
