@@ -53,12 +53,12 @@ class TestBoard(unittest.TestCase):
 
         board = Board()
         board.board = test_board
-        board.make_move(0, 0, def_card)
+        board.play_card(0, 0, def_card)
         
         self.assertEqual(board.board[0][0], def_card, "Square should equal def_card")
         self.assertEqual(board.empty_tiles, 8, "There should be 8 empty tiles")
         
         # Test that playing a card that can flip, does flip
-        board.make_move(1, 0, atk_card)
+        board.play_card(1, 0, atk_card)
         self.assertEqual(board.board[1][0], atk_card, "Square should equal atk_card")
         self.assertEqual(board.board[0][0]["player"], "B", "Square should equal atk_card")

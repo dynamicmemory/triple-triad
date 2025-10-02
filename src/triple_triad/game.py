@@ -1,5 +1,7 @@
 from triple_triad.board import Board
 from triple_triad.player import Player
+from triple_triad.randomAgent import RandomAgent
+from triple_triad.humanAgent import HumanAgent
 
 class Game:
 
@@ -14,8 +16,8 @@ class Game:
         Creates two player objects for the game
         returns: List[p.Player]
         """
-        p1: Player = Player("A")
-        p2: Player = Player("B")
+        p1: Player = Player("A", HumanAgent())
+        p2: Player = Player("B", RandomAgent())
         return [p1, p2]
 
 
@@ -34,37 +36,6 @@ class Game:
         return self.players[self.turn]
 
 
-    # TODO: Tighten this up, get rid of the try except
-    def get_input_coords(self) -> tuple:
-        """ 
-        Gets the coordinates the user wants to play on the board. 
-        """
-        while (True):
-            row = input("Enter the row you want to play on ")
-            col = input("Enter the column you want to play on ")
-            try:
-                if (int(row), int(col)) in self.board.legal_moves():
-                    return (int(row), int(col))
-            except:
-                print("You can only insert numbers from 1 to 3")
-
-    
-    # TODO: Fix if statement and card string
-    def get_input_card(self):
-        """ 
-        Gets users card choice and returns the cards name 
-        """ 
-        while (True):
-            card = input("Enter the card number you want to play ")
-            card = f"card_{card}"
-            player = self.get_player_turn()
-            for c in player.get_unplayed_cards():
-                if card == c["name"]:
-                    return player.get_card(card)
-                else:
-                    print("You can only select card you have in your hand")
-
-
     def update_scores(self, state: list) -> None: 
         """
         Updates both players scores depending on cards flipped on turn
@@ -77,12 +48,13 @@ class Game:
         """
         Determines winner of the game by comparing players scores.
         """
-        winner = ""
         if self.players[0].score > self.players[1].score:
-            winner = self.players[0].name 
+            result = f"Player {self.players[0].name} is the Winner"
+        elif self.players[1].score > self.players[0].score:
+            result = f"Player {self.players[1].name} is the Winner"
         else:
-            winner = self.players[1].name
-        return winner
+            result = "Players tied."
+        return result
 
 
     def main_loop(self) -> None:
@@ -93,13 +65,11 @@ class Game:
             # Print board and hand  
             self.print_board()
             self.print_player_hand()
-
-            # Get input 
-            row, col = self.get_input_coords()
-            card = self.get_input_card()
-
+           
+            player: Player = self.get_player_turn()
+            flipped_cards: list = player.agent.make_move(self.board, player)
+            
             # Make move
-            flipped_cards = self.board.make_move(row, col, card)
             self.update_scores(flipped_cards) 
 
             # Check terminal state 
@@ -109,9 +79,9 @@ class Game:
             self.set_player_turn()
 
         self.print_board()
-        print(f"Player {self.get_winner()} is the Winner")
+        print(self.get_winner())
 
-
+    
     def print_player_hand(self):
         players_hand: list = self.get_player_turn().get_unplayed_cards()
         print("---Card scores---") 
@@ -119,7 +89,7 @@ class Game:
             print(f"  {card["north"]}  |", end="")
         print()
         for card in players_hand:
-            print(f" {card["east"]} {card["west"]} |", end="")
+            print(f" {card["west"]} {card["east"]} |", end="")
         print() 
         for card in players_hand:
             print(f"  {card["south"]}  |", end="")
@@ -151,9 +121,9 @@ class Game:
                     if inner_row == 1:
                         if card is not None:
                             if col == 2:
-                                print(f"|{card["east"]} {card["player"]} {card["west"]}|")
+                                print(f"|{card["west"]} {card["player"]} {card["east"]}|")
                             else:
-                                print(f"|{card["east"]} {card["player"]} {card["west"]}", end="")
+                                print(f"|{card["west"]} {card["player"]} {card["east"]}", end="")
                         else:
                             if col == 2:
                                 print(f"|0   0|")

@@ -38,7 +38,7 @@ class Board:
         return moves
 
     
-    def make_move(self, row: int, col: int, card) -> list:
+    def play_card(self, row: int, col: int, card) -> list:
         """
         Updates the board with the card played, decrements empty tiles and 
         calls flip_cards to mutate board state further depending on flips 
@@ -50,7 +50,9 @@ class Board:
 
     def flip_cards(self, row: int, col: int) -> list: 
         """ 
-        Simple does too much, Flips cards if they can be flipped 
+        Checks all surrounding square of played card, flips any with lower score 
+        to current players name
+        Returns: List of all [(row, column, card of player, card that was flipped)]
         """
         dirs = {"north": (-1, 0), "east": (0, 1), "south": (1, 0), "west": (0, -1)}
         ops = {"north": "south", "east": "west", "south": "north", "west": "east"}
@@ -69,7 +71,6 @@ class Board:
 
             if played_card[key] > off_card[ops[key]]:
                 off_card["player"] = played_card["player"]
-                off_card["played"] = True
                 flipped.append((row_off, col_off, played_card["player"], off_card["player"]))
 
         return flipped

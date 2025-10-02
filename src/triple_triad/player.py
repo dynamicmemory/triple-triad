@@ -2,10 +2,11 @@ from triple_triad.card import Card
 
 class Player:
 
-    def __init__(self, name):
+    def __init__(self, name, agent):
         self.name = name
         self.score: int = 5
         self.hand: dict = self.deal_hand() 
+        self.agent: Agent = agent
 
 
     def deal_hand(self) -> dict:
@@ -38,6 +39,7 @@ class Player:
 
     def get_card(self, card: str) -> Card:
         return self.hand[card]
+
 
 
     def update_score(self):
