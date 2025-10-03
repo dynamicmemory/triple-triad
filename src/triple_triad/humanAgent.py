@@ -12,12 +12,13 @@ class HumanAgent:
         pass
 
 
-    def make_move(self, board: Board, player: Player) -> list:
+    # def make_move(self, board: Board, player: Player) -> list:
+    def make_move(self, board, row, col, card) -> list:
         """
         Makes a legal move on the game board and returns a list of coords, and cards flipped
         """
-        row, col = self.get_input_coords(board)
-        card: Card = self.get_input_card(player)
+        # row, col = self.get_input_coords(board)
+        # card: Card = self.get_input_card(player)
         
         return board.play_card(row, col, card)
         

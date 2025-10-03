@@ -17,7 +17,7 @@ class Game:
         returns: List[p.Player]
         """
         p1: Player = Player("A", HumanAgent())
-        p2: Player = Player("B", RandomAgent())
+        p2: Player = Player("B", HumanAgent())
         return [p1, p2]
 
 
@@ -57,31 +57,10 @@ class Game:
         return result
 
 
-    def main_loop(self) -> None:
-        """
-        Main loop of the game 
-        """ 
-        while (not self.board.is_gameover()):
-            # Print board and hand  
-            self.print_board()
-            self.print_player_hand()
-           
-            player: Player = self.get_player_turn()
-            flipped_cards: list = player.agent.make_move(self.board, player)
-            
-            # Make move
-            self.update_scores(flipped_cards) 
+    def get_board(self) -> Board:
+        return self.board
 
-            # Check terminal state 
-            self.gameover = self.board.is_gameover()
 
-            # switch turn 
-            self.set_player_turn()
-
-        self.print_board()
-        print(self.get_winner())
-
-    
     def print_player_hand(self):
         players_hand: list = self.get_player_turn().get_unplayed_cards()
         print("---Card scores---") 

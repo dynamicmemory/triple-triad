@@ -1,4 +1,10 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from triple_triad.card import Card 
+
+if TYPE_CHECKING:
+    from humanAgent import HumanAgent
+    from randomAgent import RandomAgent 
 
 class Player:
 
@@ -6,7 +12,7 @@ class Player:
         self.name = name
         self.score: int = 5
         self.hand: dict = self.deal_hand() 
-        self.agent: Agent = agent
+        self.agent: HumanAgent|RandomAgent = agent
 
 
     def deal_hand(self) -> dict:

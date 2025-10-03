@@ -1,3 +1,9 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from card import Card
+
 class Board:
 
     def __init__(self):
@@ -38,7 +44,7 @@ class Board:
         return moves
 
     
-    def play_card(self, row: int, col: int, card) -> list:
+    def play_card(self, row: int, col: int, card: Card) -> list:
         """
         Updates the board with the card played, decrements empty tiles and 
         calls flip_cards to mutate board state further depending on flips 
@@ -74,6 +80,20 @@ class Board:
                 flipped.append((row_off, col_off, played_card["player"], off_card["player"]))
 
         return flipped
+
+
+    def get_height(self) -> int:
+        """ 
+        Gets the gameboards height as an int
+        """
+        return self.height
+
+
+    def get_width(self) -> int:
+        """ 
+        Gets the gameboards width as an int
+        """
+        return self.width
 
 
     def test_print(self):
