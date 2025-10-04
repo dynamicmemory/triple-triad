@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from triple_triad.card import Card 
+from triple_triad.randomAgent import RandomAgent
+from triple_triad.humanAgent import HumanAgent
 
 if TYPE_CHECKING:
     from humanAgent import HumanAgent
@@ -8,11 +10,26 @@ if TYPE_CHECKING:
 
 class Player:
 
-    def __init__(self, name, agent):
+    def __init__(self, name, agent, ai):
         self.name = name
         self.score: int = 5
         self.hand: dict = self.deal_hand() 
-        self.agent: HumanAgent|RandomAgent = agent
+        self.agent: HumanAgent|RandomAgent|None = agent
+        self.ai: bool|None = ai 
+        
+
+    def set_agent(self, agent_type: str) -> None:
+        """
+        Sets the type of agent the player is and whether they are AI or human
+        Params: str - human, ai, (eventually - random, minimax, etc)
+        """
+        # Add fields for type of agent depending on difficulty
+        if agent_type == "human":
+            self.agent = HumanAgent()
+            self.ai = False 
+        elif agent_type == "ai":
+            self.agent = RandomAgent()
+            self.ai = True 
 
 
     def deal_hand(self) -> dict:

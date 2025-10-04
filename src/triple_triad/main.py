@@ -3,33 +3,43 @@ from triple_triad.player import Player
 from triple_triad.gui import GUI 
 
 def main():
-
     # Create a game, print the board and the players hand 
-    g: Game = Game()
-    gui: GUI = GUI(g)
-    # while (not g.board.is_gameover()):
+    game: Game = Game()
+    gui: GUI = GUI(game)
+    state: str = "menu"
+    while gui.running:
+        if state == "menu":
+            state = gui.draw_menu()
+            # state = "game"
+            # Render menu 
+                # Single player 
+                # Multiplayer
+                # Quit
 
-        # gui.render_game()
-        # g.print_board()
-        # g.print_player_hand()
+        elif state == "game":
+            gui.render_game()
 
-        # gui.event_loop()
-        # Get the current players turn and call agent to prompt or execute move
-        # player: Player = g.get_player_turn()
-        # flipped_cards: list = player.agent.make_move(g.board, player)
+            # AI players call its make move directly and update state (change?) 
+            if game.get_player_turn().ai:
+                player: Player = game.get_player_turn()
+                flipped_cards: list = player.agent.make_move(game.board, player)
+                game.update_scores(flipped_cards)
+                game.set_player_turn()
 
-        # Update the scores, check if the game is over, switch turns
-        # g.update_scores(flipped_cards)
-        # g.set_player_turn()
+            # Human players enters the event loop, game will listen for clicks
+            gui.event_loop()
+            gui.clock.tick(60)
+            if game.board.is_gameover():
+                state = "gameover"
+                # Render last move then leave to gameover screen
+                gui.render_game()
+                # print(game.get_winner())
 
-    # Once the last move has been made, print final board and announce winner 
-    # g.print_board()
-    # gui.render_game()
-    # print(g.get_winner())
+        elif state == "gameover":
+            state = gui.draw_gameover(game.get_winner())
 
-    input("")
-    # gui.event_loop()
-
+        elif state == "quit":
+            break
 
 if __name__ == "__main__":
     main()
