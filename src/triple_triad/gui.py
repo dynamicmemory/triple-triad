@@ -66,8 +66,16 @@ class GUI:
                         self.game.set_player_turn()
 
 
-    # TODO: Correctly math out all rendering using relative sizes
+
     def render_game(self):
+        self.draw_board()
+        self.draw_hands()
+        self.draw_score()
+        pygame.display.update()
+
+
+    # TODO: Correctly math out all rendering using relative sizes
+    def draw_board(self):    
         board: Board = self.game.get_board()
         # Draw the gameboard and hand area backgounds
         pygame.draw.rect(self.screen, orange, (250, 10, 400, 580))
@@ -82,6 +90,8 @@ class GUI:
         for row in range(board.get_height()):
             width: int = 285
             for col in range(board.get_width()):
+                col_off = col * (card_width + gap_offset)  
+                row_off = row * (card_height + gap_offset)  
 
                 # Get value at board location
                 card: Card = self.game.get_board().board[row][col]
@@ -94,21 +104,10 @@ class GUI:
                                                                   card_width, 
                                                                   card_height))
 
-                    # TODO: Redo these calcs better and more efficent and relative
-                    font = pygame.font.Font(None, 60)
-                    north = font.render(f"{card["north"]}", True, font_colour)
-                    east = font.render(f"{card["east"]}", True, font_colour)
-                    south = font.render(f"{card["south"]}", True, font_colour)
-                    west = font.render(f"{card["west"]}", True, font_colour)
-                    self.screen.blit(north, (325 + (col * (card_width + gap_offset)), 
-                                             25 + (row * (card_height + gap_offset))))
-                    self.screen.blit(east, (355 + (col * (card_width + gap_offset)), 
-                                            90 + (row * (card_height+gap_offset))))
-                    self.screen.blit(south, (325 + (col * (card_width + gap_offset)), 
-                                             155 + (row * (card_height + gap_offset))))
-                    self.screen.blit(west, (295 + (col * (card_width + gap_offset)), 
-                                            90 + (row * (card_height + gap_offset))))
-
+                    self.draw_text(f"{card["north"]}", font_colour, 60, (325+col_off, 25+row_off))
+                    self.draw_text(f"{card["east"]}", font_colour, 60, (355+col_off, 90+row_off))
+                    self.draw_text(f"{card["south"]}", font_colour, 60, (325+col_off, 155+row_off))
+                    self.draw_text(f"{card["west"]}", font_colour, 60, (295+col_off, 90+row_off))
                 else: 
                     rect = pygame.draw.rect(self.screen, white, (width, height, 
                                                                  card_width, 
@@ -126,60 +125,63 @@ class GUI:
             # Add one card heigh per row
             height += card_height + gap_offset     # This should be done better
 
-        # Draw hands 
+
+
+    def draw_hands(self):
         p1: int = 75     # Where to start drawing p1s cards
         p2: int = 725    # Where to start drawing p2s cards (clean these up) 
         height: int = 20
+        card_width: int = 100 
+        card_height: int = 175
         for num in range(5):
+            off_set = num * (card_height/2)
+
             card: Card = self.game.players[0].get_card(f"card_{num}")
             if not card["played"]:
                 rect = pygame.draw.rect(self.screen, purple, (p1, height, card_width, card_height))
                 pygame.draw.rect(self.screen, black, (p1, height, card_width, card_height), 2)
+
+                # Saves clicked card to map
                 self.hand_clicked[(self.game.players[0], f"card_{num}")] = rect
+
                 # Draw the cards scores on the card
-                font = pygame.font.Font(None, 30)
-                north = font.render(f"{card["north"]}", True, white)
-                east = font.render(f"{card["east"]}", True, white)
-                south = font.render(f"{card["south"]}", True, white)
-                west = font.render(f"{card["west"]}", True, white)
-                self.screen.blit(north, (120, 30+(num * (card_height/2))))
-                self.screen.blit(east, (140, 55+(num * (card_height/2))))
-                self.screen.blit(south, (120, 80+(num * (card_height/2))))
-                self.screen.blit(west, (100, 55+(num * (card_height/2))))
+                self.draw_text(f"{card["north"]}", white, 30,(120, 30 + off_set))
+                self.draw_text(f"{card["east"]}", white, 30, (140, 55 + off_set))
+                self.draw_text(f"{card["south"]}", white, 30,(120, 80 + off_set)) 
+                self.draw_text(f"{card["west"]}", white, 30,(100, 55 + off_set)) 
 
             card = self.game.players[1].get_card(f"card_{num}")
             if not card["played"]:
                 rect = pygame.draw.rect(self.screen, trunks, (p2, height, card_width, card_height))
                 pygame.draw.rect(self.screen, black, (p2, height, card_width, card_height), 2)
+
+                # Saves clicked card to map
                 self.hand_clicked[(self.game.players[1], f"card_{num}")] = rect
 
                 # Draw the cards scores on the card
-                font = pygame.font.Font(None, 30)
-                north = font.render(f"{card["north"]}", True, black)
-                east = font.render(f"{card["east"]}", True, black)
-                south = font.render(f"{card["south"]}", True, black)
-                west = font.render(f"{card["west"]}", True, black)
-                self.screen.blit(north, (770, 30+(num * (card_height/2))))
-                self.screen.blit(east, (790, 55+(num * (card_height/2))))
-                self.screen.blit(south, (770, 80+(num * (card_height/2))))
-                self.screen.blit(west, (750, 55+(num * (card_height/2))))   
+                self.draw_text(f"{card["north"]}", black, 30,(770, 30 + off_set))
+                self.draw_text(f"{card["east"]}", black, 30,(790, 55 + off_set))
+                self.draw_text(f"{card["south"]}", black, 30,(770, 80 + off_set)) 
+                self.draw_text(f"{card["west"]}", black, 30,(750, 55 + off_set)) 
 
             height += int(card_height / 2)
-       
-        self.draw_score()
-        pygame.display.update()
 
 
-    # TODO: Loop through players instead of duplicating calls
+    def draw_text(self, text, t_col, font_size, t_coords):
+        font = pygame.font.Font(None, font_size)
+        t = font.render(f"{text}", True, t_col)
+        self.screen.blit(t, t_coords)
+
+
     def draw_score(self):
         """
         Draws the score for both players on the game board
         """
         font = pygame.font.Font(None, 60)
-        p1_score = font.render(f"{self.game.players[0].score}", True, black)
-        p2_score = font.render(f"{self.game.players[1].score}", True, black)
-        self.screen.blit(p1_score, (125, 550))
-        self.screen.blit(p2_score, (775, 550))
+        players = [(self.game.players[0],125),(self.game.players[1],775)]
+        for player in players:
+            score = font.render(f"{player[0].score}", True, black)
+            self.screen.blit(score, (player[1], 550))
 
 
     # TODO: Break this up into smaller functions once all menus are fin
@@ -187,31 +189,19 @@ class GUI:
     def draw_menu(self):
         # Set default backgournd and font for menu
         pygame.draw.rect(self.screen, black, (0, 0, 900, 600))
-        font = pygame.font.Font(None, 40)
-
-        singleplayer = pygame.draw.rect(self.screen, trunks, (350, 100, 200, 50))
-        single_text = font.render("Single player", True, black)
-        self.screen.blit(single_text, (360, 110))
-
-        multplayer = pygame.draw.rect(self.screen, trunks, (350, 200, 200, 50))
-        multi_text = font.render("Multiplayer", True, black)
-        self.screen.blit(multi_text, (380, 210))
-
-        quit = pygame.draw.rect(self.screen, orange, (350, 300, 200, 50))
-        quit_text = font.render("Quit", True, black)
-        self.screen.blit(quit_text, (420, 310))
+        s = self.menu_helper(trunks, (350, 100, 200, 50), "Single Player", (360, 110))
+        m = self.menu_helper(trunks, (350, 200, 200, 50), "Multiplayer", (380, 210))
+        q = self.menu_helper(orange, (350, 300, 200, 50), "Quit", (420, 310))
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if singleplayer.collidepoint(event.pos): 
+                if s.collidepoint(event.pos): 
                     self.game.setup_players("human", "ai")
-                    # Set up ai on human
                     return "game"
-                elif multplayer.collidepoint(event.pos):
+                elif m.collidepoint(event.pos):
                     self.game.setup_players("human", "human")
-                    # Set up human on human
                     return "game"
-                elif quit.collidepoint(event.pos):
+                elif q.collidepoint(event.pos):
                     pygame.quit()
                     return "quit"
 
@@ -227,17 +217,9 @@ class GUI:
         winner_text = font.render(f"{winner_message}", True, black)
         self.screen.blit(winner_text, (360, 110))
 
-        rematch = pygame.draw.rect(self.screen, trunks, (350, 200, 200, 50))
-        rematch_text = font.render("Rematch", True, black)
-        self.screen.blit(rematch_text, (390, 210))
-
-        menu = pygame.draw.rect(self.screen, trunks, (350, 300, 200, 50))
-        menu_text = font.render("Back to Menu", True, black)
-        self.screen.blit(menu_text, (360, 310))
-
-        quit = pygame.draw.rect(self.screen, orange, (350, 400, 200, 50))
-        quit_text = font.render("Quit", True, black)
-        self.screen.blit(quit_text, (420, 410))
+        rematch = self.menu_helper(trunks, (350, 200, 200, 50), "Rematch", (390,210))
+        menu = self.menu_helper(trunks, (350, 300, 200, 50), "Back To Menu", (360,310))
+        quit_game = self.menu_helper(orange, (350, 400, 200, 50), "Quit", (420,410))
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -249,7 +231,7 @@ class GUI:
                     self.game.reset_game()
                     return "menu"
 
-                elif quit.collidepoint(event.pos):
+                elif quit_game.collidepoint(event.pos):
                     pygame.quit()
                     return "quit"
 
@@ -257,5 +239,11 @@ class GUI:
         return "gameover"
 
 
-    def draw_board(self):
-        pass
+    def menu_helper(self, colour, rect_coords, text, text_cords):
+        """
+        Draws text and panels for menus and returns the panels
+        """
+        button = pygame.draw.rect(self.screen, colour, rect_coords) 
+        t = pygame.font.Font(None, 40).render(f"{text}", True, black) 
+        self.screen.blit(t, text_cords) 
+        return button 
