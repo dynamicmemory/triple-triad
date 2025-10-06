@@ -19,7 +19,6 @@ class HumanAgent:
         """
         # row, col = self.get_input_coords(board)
         # card: Card = self.get_input_card(player)
-        
         return board.play_card(row, col, card)
         
 

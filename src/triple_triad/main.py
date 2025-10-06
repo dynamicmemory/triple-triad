@@ -8,13 +8,9 @@ def main():
     gui: GUI = GUI(game)
     state: str = "menu"
     while gui.running:
+        game_board = game.get_board()
         if state == "menu":
             state = gui.draw_menu()
-            # state = "game"
-            # Render menu 
-                # Single player 
-                # Multiplayer
-                # Quit
 
         elif state == "game":
             gui.render_game()
@@ -22,18 +18,17 @@ def main():
             # AI players call its make move directly and update state (change?) 
             if game.get_player_turn().ai:
                 player: Player = game.get_player_turn()
-                flipped_cards: list = player.agent.make_move(game.board, player)
+                flipped_cards: list = player.get_agent().make_move(game_board, player)
                 game.update_scores(flipped_cards)
                 game.set_player_turn()
 
             # Human players enters the event loop, game will listen for clicks
             gui.event_loop()
             gui.clock.tick(60)
-            if game.board.is_gameover():
+            if game_board.is_gameover():
                 state = "gameover"
                 # Render last move then leave to gameover screen
                 gui.render_game()
-                # print(game.get_winner())
 
         elif state == "gameover":
             state = gui.draw_gameover(game.get_winner())

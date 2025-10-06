@@ -37,7 +37,7 @@ class GUI:
 
 
     def event_loop(self) -> None:
-        curr_player: Player = self.game.get_player_turn()
+        player: Player = self.game.get_player_turn()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,26 +45,25 @@ class GUI:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Selects the card that was clicked
-                for (player, card), rect in self.game_event_map["hands"].items():
-                    if (rect != None and rect.collidepoint(event.pos) and curr_player == player):
-                        self.selected_card = curr_player.get_card(card)
+                for (p, c), rect in self.game_event_map["hands"].items():
+                    if (rect != None and rect.collidepoint(event.pos) and player == p):
+                        self.selected_card = player.get_card(c)
                         self.is_card_clicked = True
 
                 # Selects the place on the board to put the card 
                 for (row, col), rect in self.game_event_map["board"].items():
                     if (rect.collidepoint(event.pos) and self.is_card_clicked and 
-                        self.game.board.board[row][col] == None):
-                        flipped: list = curr_player.agent.make_move(self.game.board, 
+                        self.game.get_board().board[row][col] == None):
+                        flip: list = player.get_agent().make_move(self.game.get_board(), 
                                                               row, col, self.selected_card) 
 
                         # Cleans up all the details after a player plays a card 
-                        curr_player.set_played_card(self.selected_card["name"])
-                        self.hand_clicked[(curr_player, self.selected_card["name"])] = None
+                        player.set_played_card(self.selected_card["name"])
+                        self.hand_clicked[(player, self.selected_card["name"])] = None
                         self.is_card_clicked = False 
                         self.selected_card = None
-                        self.game.update_scores(flipped)
+                        self.game.update_scores(flip)
                         self.game.set_player_turn()
-
 
 
     def render_game(self):
@@ -90,8 +89,12 @@ class GUI:
         for row in range(board.get_height()):
             width: int = 285
             for col in range(board.get_width()):
+                card_coords = (width, height, card_width, card_height)
                 col_off = col * (card_width + gap_offset)  
                 row_off = row * (card_height + gap_offset)  
+
+                # Set a card to blank
+                rect = pygame.draw.rect(self.screen, white, card_coords)
 
                 # Get value at board location
                 card: Card = self.game.get_board().board[row][col]
@@ -100,31 +103,23 @@ class GUI:
                 if card:
                     colour: tuple = purple if card["player"] == "A" else trunks
                     font_colour: tuple = white if card["player"] == "A" else black
-                    rect = pygame.draw.rect(self.screen, colour, (width, height, 
-                                                                  card_width, 
-                                                                  card_height))
+                    rect = pygame.draw.rect(self.screen, colour, card_coords)
 
                     self.draw_text(f"{card["north"]}", font_colour, 60, (325+col_off, 25+row_off))
                     self.draw_text(f"{card["east"]}", font_colour, 60, (355+col_off, 90+row_off))
                     self.draw_text(f"{card["south"]}", font_colour, 60, (325+col_off, 155+row_off))
                     self.draw_text(f"{card["west"]}", font_colour, 60, (295+col_off, 90+row_off))
-                else: 
-                    rect = pygame.draw.rect(self.screen, white, (width, height, 
-                                                                 card_width, 
-                                                                 card_height))
 
                 # Stores the click on the gameboard made by the player 
                 self.board_clicked[(row, col)] = rect
 
                 # Draw the card border
-                pygame.draw.rect(self.screen, black, (width, height, 
-                                                      card_width, card_height), 2)
+                pygame.draw.rect(self.screen, black, card_coords, 2)
 
                 # Add one card width per col 
                 width += card_width + gap_offset
             # Add one card heigh per row
             height += card_height + gap_offset     # This should be done better
-
 
 
     def draw_hands(self):

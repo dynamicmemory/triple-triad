@@ -61,11 +61,14 @@ class Player:
 
 
     def get_card(self, card: str) -> Card:
+        """ 
+        Returns a card object from a giving name 
+        """
         return self.hand[card]
 
 
-
-    def update_score(self):
-        pass
-
-
+    def get_agent(self) -> None|HumanAgent|RandomAgent:
+        """ 
+        Returns the agent controlling a player 
+        """
+        return self.agent
