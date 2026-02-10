@@ -18,6 +18,7 @@ bulma: tuple = (0, 220, 130)
 trunks: tuple = (0, 200, 220)
 purple: tuple = (130, 0, 220)
 blue: tuple = (0, 90, 220)
+magenta: tuple = (230, 40, 245)
 
 class GUI:
 
@@ -78,7 +79,7 @@ class GUI:
         board: Board = self.game.get_board()
         # Draw the gameboard and hand area backgounds
         pygame.draw.rect(self.screen, orange, (250, 10, 400, 580))
-        pygame.draw.rect(self.screen, bulma, (25, 10, 200, 580))   #p1 hand area
+        pygame.draw.rect(self.screen, magenta, (25, 10, 200, 580))   #p1 hand area
         pygame.draw.rect(self.screen, green, (675, 10, 200, 580))  #p2 hand area
 
         # Draw the 9 cards on the gameboard

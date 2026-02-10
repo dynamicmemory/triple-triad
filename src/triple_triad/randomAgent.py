@@ -1,5 +1,6 @@
 import random as r
 import copy
+import time as time
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -40,6 +41,7 @@ class RandomAgent:
 
         # Gets the name of the card the AI played and sets it to used.
         card_name: str = card["name"]
+        time.sleep(1)
         player.set_played_card(card_name)
         return board.play_card(row, col, card)
 
